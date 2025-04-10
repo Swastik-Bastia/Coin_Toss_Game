@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Head or Tail Toss Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .game-container {
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .coin-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 30px auto 50px auto;
+        }
+
+        .coin {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .side {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: gold;
+            color: black;
+            font-size: 40px;
+            font-weight: bold;
+            line-height: 100px;
+            position: absolute;
+            backface-visibility: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .heads {
+            background: gold;
+        }
+
+        .tails {
+            background: silver;
+            transform: rotateY(180deg);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            background: #ff9800;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #e68900;
+        }
+
+        /* Popup Style */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .popup button {
+            margin-top: 10px;
+            background: #ff9800;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .popup button:hover {
+            background: #e68900;
+        }
+        footer {
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+            background: #333;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Coin Toss Game</h1>
+        <p>Choose Head or Tail and flip the coin!</p>
+
+        <div class="coin-container">
+            <div class="coin" id="coin">
+                <div class="side heads">H</div>
+                <div class="side tails">T</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="tossCoin('heads')">Head</button>
+            <button onclick="tossCoin('tails')">Tail</button>
+        </div>
+    </div>
+
+    <!-- Popup Message -->
+    <div id="popup" class="popup">
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">OK</button>
+    </div>
+
+    <!-- Coin Flip Sound -->
+    <audio id="flipSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d5ea1ec435.mp3?filename=coin-flip-88793.mp3"></audio>
+
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <footer>
+        <p>&copy; Copyright by Swastik</p>
+    </footer>
+
+    <script>
+        function tossCoin(playerChoice) {
+            let flipSound = document.getElementById("flipSound");
+            flipSound.play(); // Play flip sound
+
+            let coin = document.getElementById("coin");
+            let popup = document.getElementById("popup");
+            let popupMessage = document.getElementById("popup-message");
+
+            let randomResult = Math.random() < 0.5 ? "heads" : "tails"; // 50/50 chance
+            let rotationY = randomResult === "heads" ? 0 : 180;
+            let rotationX = 720; // Flip multiple times
+
+            // GSAP Animation - Move Up, Flip, and Come Down
+            gsap.to(coin, { y: -200, duration: 0.5, ease: "power2.out" });
+            gsap.to(coin, { rotationX: rotationX, rotationY: rotationY, duration: 1, ease: "power2.inOut", delay: 0.3 });
+            gsap.to(coin, { y: 0, duration: 0.5, ease: "bounce.out", delay: 1 });
+
+            setTimeout(() => {
+                popup.style.display = "block";
+                popupMessage.innerHTML = playerChoice === randomResult ? "🎉 You Win!" : "😞 You Lose!";
+            }, 1500);
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
